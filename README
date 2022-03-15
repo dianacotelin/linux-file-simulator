@@ -1,0 +1,123 @@
+321CD Cotelin Maria-Diana
+
+~~~~~~~~~~~~~~~~~~~~~~~~ Tema 1 IOCLA ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    0. Main
+        Am creat un director home care reprezinta baza ierarhiei de
+    fisiere. Folosesc 3 pointeri de tip char, unul pentru numele 
+    comenzii, celalalt pentru ce vreau sa creez/sterg si ultimul
+    pentru functia mv.
+        Citesc linia si pun pe ultima pozitie 0 ca sa pot sa despart
+    in tokens. Verific ce comanda primesc si apelez functia pentru ea.
+        home2 este folosit pentru cd pentru a putea schimba directorul in
+    care se executa comenzile si pentru a putea sterge la final toata ierarhia.
+
+    1. touch
+        *Folosesc o functie auxiliara create_f care aloca memorie
+    si seteaza next si parent pe NULL. 
+        Intai caut fisierul in lista de directoare a directorului 
+    parinte, iar apoi in cea de fisiere. Daca nu s-a folosit numele
+    creez fisierul si apoi verific daca il pun in coada sau la inceput.
+
+
+    2. mkdir
+        Exact la fel ca la touch, folosind o functie auxiliara create_d
+
+
+    3. ls 
+        Parcurg toate directoarele si le afisez, iar apoi si fisierele
+
+
+    4. rm
+        Analizez 5 cazuri: 
+    1. Daca directorul curent nu are fisiere
+    2. Daca are un singur fisier care este chiar cel cautat
+    3. Daca are mai multe fisiere, dar primul este cel cautat
+    4. Daca se afla in lista de fisiere, dar nu este ultimul. Parcurg
+    toata lista si retin fisierul anterior. Pe primul if nu o sa intre
+    niciodata de prima data, deoarece cazul 2 previne acest lucru, asa ca
+    intra pe else si retine fisierul curent, apoi while ul contiuna pana
+    gaseste fisierul dorit, fisierul anterior (tmp2) va primi ca next
+    urmatorul fisier, si cu ajutorul lui tmp3 sterg fisierul cautat,
+    eliberand memoria.
+    5. Daca while ul s-a terminat verific daca ultimul fisier era cel
+    cautat, in acest caz il sterg si penultimul fisier va primi ca next 
+    NULL (tmp2->next = NULL).
+        Altfel fisierul nu a fost gasit.
+
+
+    5. rmdir
+        *Folosesc functia auxiliara rmtraversal pentru a parcurge recursiv
+    listele de directoare. Are structura asemanatoare cu parcurgerea arborilor
+    binari, intai o apelez pana ajung la ultimul director, apoi ii sterg
+    fisierele, se revine la pasul anterior si se face acelasi lucru pentru
+    urmatorul fisier.
+
+        Exemplu: 
+        home -> d1
+                    d2
+                        d3
+                            f3
+                        f2
+                    f1
+                f4
+        unde f3 este fisierul lui d3 etc.
+
+        Se intra in while, se apeleaza rmtraversal pentru d1, apoi d2 fiind
+    head_children_dirs al lui d1 se apleaza si pentru el si tot asa pana
+    se ajunge la d3. D3 nu are directoare, asa ca se iese din while si i se
+    sterg fisierele (f3), functia se termina, se revine la apelul pentru d2,
+    apoi se sterge (f2), si tot asa pana se ajunge la apelul pentru home si
+    se sterge si f4. Eliberez si memoria in acelasi timp.
+        Functia rmdir are aceeasi structura pe cazuri ca si rm.
+
+
+    6. cd
+        Verific intai daca am primit ".." ca input si daca directorul curent
+    are parinte, daca da, target o sa pointeze spre el.
+    Altfel caut directorul si il fac pe target sa pointeze spre el.
+
+
+    7. pwd
+        Am folosit 2 pointeri char pe care i-am alocat dinamic. In ret o sa 
+    retin toate directoarele prin care am trecut, iar in ret2 directorul pe
+    care vreau sa il pun la inceput.
+        Exemplu: home -> d1 -> d2 -> d3
+        ret = /d3 ret2 = /d3    (am folosit ret2 inainte de while pentru simetrie)
+        ret2 = /d2 - se intra in while
+        ret2 = /d2/d3
+        ret = /d2/d3
+        ret2 = /d1 - se reia while-ul
+        ret2 = /d1/d2/d3
+        ret = /d1/d2/d3
+        ret2 = /home - se reia while-ul
+        ret2 = /home/d1/d2/d3
+        ret = /home/d1/d2/d3
+
+        La final eliberez memoria pentru ret2, iar pe cea pentru ret o eliberez
+        in main.
+
+    
+    8. tree
+        Nivelul pe care este home e -1, iar cel pe care se afla primele directoare
+        este 0. Daca sunt pe nivelul 0 nu afisez spatii, se afiseaza numele
+        directorului curent si apoi se parcurge recursiv acesta. Dupa ce
+        parcurgerea se termina se afiseaza si fisierele.
+        Spatiile se afiseaza in functie de nivel.
+        Exemplu:
+        Sunt pe nivelul 3 (level), level_2 o sa fie 4, afisez 3 seturi de
+        spatii si apelez functia recursiva pentru nivelul 4.
+
+    
+    9. stop
+        Se parcurge lista de directoare si se sterg recursiv folosind rmdir,
+    se trece apoi la fisiere si se sterg si acelea.
+
+
+    BONUS mv
+        Folosesc 4 ok-uri cu care verific daca exista numele pentru numele
+    nou de director, numele vechi, numele nou de fisier si numele vechi,
+    parcurgand lista de directoare si apoi de fisiere. Daca numele vechi nu
+    exista afisez asta si apoi revin in main, daca numele nou exista afisez asta
+    si revin in main. Altfel sterg fisierul/directorul si il creez pe cel nu noul
+    nume.
